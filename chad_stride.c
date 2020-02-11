@@ -195,12 +195,12 @@ const char* chad_frames[7][24] = {
 };
 
 void usage(const int exit_code) {
-  printf("./cchad -[flags]\n\r"
-"-s: Chad stays still and doesn't move forever\n\r"
-"-l: Chad walks infinitely\n\r"
-"-b: Big Chad (each b increases chad)\n\r"
-"-f: Chad gives no fucks (ignores signals)\n\r"
-"-h: This message\n\r");
+  printf("./cchad -[flags]\n"
+"-s: Chad stays still and doesn't move forever\n"
+"-l: Chad walks infinitely\n"
+"-b: Big Chad (each b increases chad)\n"
+"-f: Chad gives no fucks (ignores signals)\n"
+"-h: This message\n");
   exit(exit_code);
 }
 
