@@ -231,6 +231,23 @@ void arg_parse(char* arg) {
   }
 }
 
+short get_color(char c, int pair){
+    switch (c){
+        case 'b':
+            return 2;
+        case 'y':
+            return 6;
+        case 'r':
+            return 3;
+        case 'c':
+            return 5;
+        case 'g':
+            return 4;
+        default:
+            return pair;
+    }
+}
+
 int main(int argc, char *argv[]) {
 
     /* Handle Arguments */
@@ -251,6 +268,7 @@ int main(int argc, char *argv[]) {
     int col, row;
     int x_pos = 0, i = 0;
     initscr();
+    start_color();
     getmaxyx(stdscr, row, col); // stdscr is default screen
     noecho();
     curs_set(0);
@@ -258,9 +276,19 @@ int main(int argc, char *argv[]) {
     leaveok(stdscr, 1);
     scrollok(stdscr, 0);
 
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+    init_pair(2, COLOR_BLUE, COLOR_BLACK);
+    init_pair(3, COLOR_RED, COLOR_BLACK);
+    init_pair(4, COLOR_GREEN, COLOR_BLACK);
+    init_pair(5, COLOR_CYAN, COLOR_BLACK);
+    init_pair(6, COLOR_YELLOW, COLOR_BLACK);
+
+    int pair = 1;
+
+    short old_color = COLOR_WHITE;
     /* loop until done */
     while(x_pos < col || LOOP) {
-        clear();
+        attron(COLOR_PAIR(pair));
 
         // check for wrap on loop
         if (x_pos >= col) x_pos = 0;
@@ -277,8 +305,10 @@ int main(int argc, char *argv[]) {
         if (!STAY) x_pos++; // move across screen
 
         /* Ncurses stuff */
-        getch();
         refresh();
+        char c = getch();
+        pair = get_color(c, pair);
+        clear();
 
         /* animation wait */
         usleep(150000);
