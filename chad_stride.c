@@ -231,22 +231,28 @@ void arg_parse(char* arg) {
   }
 }
 
-short get_color(char c, int pair){
+
+int get_color_pair(char c, int pair){
     switch (c){
+        case 'w':
+            return 1;
         case 'b':
             return 2;
-        case 'y':
-            return 6;
         case 'r':
             return 3;
-        case 'c':
-            return 5;
         case 'g':
             return 4;
+        case 'c':
+            return 5;
+        case 'y':
+            return 6;
+        case 'm':
+            return 7;
         default:
             return pair;
     }
 }
+
 
 int main(int argc, char *argv[]) {
 
@@ -276,18 +282,23 @@ int main(int argc, char *argv[]) {
     leaveok(stdscr, 1);
     scrollok(stdscr, 0);
 
+	/* initialize colors */
     init_pair(1, COLOR_WHITE, COLOR_BLACK);
     init_pair(2, COLOR_BLUE, COLOR_BLACK);
     init_pair(3, COLOR_RED, COLOR_BLACK);
     init_pair(4, COLOR_GREEN, COLOR_BLACK);
     init_pair(5, COLOR_CYAN, COLOR_BLACK);
     init_pair(6, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(7, COLOR_MAGENTA, COLOR_BLACK);
 
+	/* default to white */
     int pair = 1;
+    int old_color = COLOR_WHITE;
 
-    short old_color = COLOR_WHITE;
     /* loop until done */
     while(x_pos < col || LOOP) {
+
+		/* set color */
         attron(COLOR_PAIR(pair));
 
         // check for wrap on loop
@@ -306,8 +317,11 @@ int main(int argc, char *argv[]) {
 
         /* Ncurses stuff */
         refresh();
+
+		/* Color stuff */
         char c = getch();
-        pair = get_color(c, pair);
+        pair = get_color_pair(c, pair);
+
         clear();
 
         /* animation wait */
