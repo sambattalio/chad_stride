@@ -8,7 +8,7 @@
 #define CHAD_FRAMES 7
 #define CHAD_ROWS   24
 
-int STAY = 0, LOOP = 0, SIZE = 1, NOFUCKS = 0;
+int STAY = 0, LOOP = 0, SIZE = 1, NOFUCKS = 0, COLOR = 0;
 
 /* Chad frames */
 
@@ -198,11 +198,12 @@ const char* chad_frames[CHAD_FRAMES][CHAD_ROWS] = {
 };
 
 void usage(const int exit_code) {
-  printf("./cchad -[flags]\n"
+  printf("./chad_stride -[flags]\n"
 "-s: Chad stays still and doesn't move forever\n"
 "-l: Chad walks infinitely\n"
 "-b: Big Chad (each b increases chad)\n"
 "-f: Chad gives no fucks (ignores signals)\n"
+"-c: Chad responds to color input <w|b|r|g|y|m|c>\n"
 "-h: This message\n");
   exit(exit_code);
 }
@@ -222,6 +223,9 @@ void arg_parse(char* arg) {
         break;
       case 'f':
         NOFUCKS = 1;
+        break;
+      case 'c':
+        COLOR = 1;
         break;
       case 'h':
         usage(0);
@@ -274,7 +278,7 @@ int main(int argc, char *argv[]) {
     int col, row;
     int x_pos = 0, i = 0;
     initscr();
-    start_color();
+    if (COLOR) start_color();
     getmaxyx(stdscr, row, col); // stdscr is default screen
     noecho();
     curs_set(0);
@@ -320,7 +324,10 @@ int main(int argc, char *argv[]) {
 
 		/* Color stuff */
         char c = getch();
-        pair = get_color_pair(c, pair);
+
+		if (COLOR){
+        	pair = get_color_pair(c, pair);
+		}
 
         clear();
 
