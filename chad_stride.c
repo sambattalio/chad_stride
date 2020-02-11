@@ -3,10 +3,11 @@
 #include <stdlib.h>
 #include <unistd.h> // usleep
 #include <string.h> // strlen
+#include <signal.h>
 
-int STAY = 0, LOOP = 0, SIZE = 1;
+int STAY = 0, LOOP = 0, SIZE = 1, NOFUCKS = 0;
 
-/* Chad frames */ 
+/* Chad frames */
 
 const char* chad_frames[7][24] = {
     {
@@ -198,6 +199,7 @@ void usage(const int exit_code) {
 "-s: Chad stays still and doesn't move forever\n\r"
 "-l: Chad walks infinitely\n\r"
 "-b: Big Chad (each b increases chad)\n\r"
+"-f: Chad gives no fucks (ignores signals)\n\r"
 "-h: This message\n\r");
   exit(exit_code);
 }
@@ -215,6 +217,9 @@ void arg_parse(char* arg) {
       case 'b':
         SIZE += 1;
         break;
+      case 'f':
+        NOFUCKS = 1;
+        break;
       case 'h':
         usage(0);
       default:
@@ -225,11 +230,19 @@ void arg_parse(char* arg) {
 
 int main(int argc, char *argv[]) {
     int i = 0, x_pos = 0;
-    
+
     for (i = 1; i < argc; i++) {
         if (argv[i][0] == '-')
             arg_parse(argv[i]);
-    } 
+    }
+
+    if (NOFUCKS) {
+        signal(SIGHUP , SIG_IGN);
+        signal(SIGINT , SIG_IGN);
+        signal(SIGPIPE, SIG_IGN);
+        signal(SIGTERM, SIG_IGN);
+        signal(SIGTSTP, SIG_IGN);
+    }
 
     int col, row;
     initscr();
