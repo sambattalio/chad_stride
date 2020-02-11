@@ -258,4 +258,10 @@ int main(int argc, char *argv[]) {
         refresh();
         usleep(150000);
     }
+
+    delwin(stdscr);
+    endwin();
+    refresh();
+
+    return 0;
 }
