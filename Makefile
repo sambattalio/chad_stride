@@ -1,10 +1,10 @@
 CC= 	gcc
-LIB= 	-Wall -lncurses
+CFLAGS=	-Wall -std=gnu99 -O3
+LIB= 	-lncurses
 PREFIX= /usr/local
-OPTIMIZATIONS= O3
 
 chad_stride: 	chad_stride.c
-	$(CC) -$(OPTIMIZATIONS) -o $@ $^ $(LIB)
+	$(CC) $(CFLAGS) -o $@ $^ $(LIB)
 
 install: 	chad_stride
 	install -m 755 -D chad_stride $(PREFIX)/bin/chad_stride
