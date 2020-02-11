@@ -5,11 +5,14 @@
 #include <string.h> // strlen
 #include <signal.h>
 
+#define CHAD_FRAMES 7
+#define CHAD_ROWS   24
+
 int STAY = 0, LOOP = 0, SIZE = 1, NOFUCKS = 0;
 
 /* Chad frames */
 
-const char* chad_frames[7][24] = {
+const char* chad_frames[CHAD_FRAMES][CHAD_ROWS] = {
     {
       "                          %",
       "                     .(....",
@@ -229,9 +232,9 @@ void arg_parse(char* arg) {
 }
 
 int main(int argc, char *argv[]) {
-    int i = 0, x_pos = 0;
 
-    for (i = 1; i < argc; i++) {
+    /* Handle Arguments */
+    for (int i = 1; i < argc; i++) {
         if (argv[i][0] == '-')
             arg_parse(argv[i]);
     }
@@ -244,34 +247,44 @@ int main(int argc, char *argv[]) {
         signal(SIGTSTP, SIG_IGN);
     }
 
+    /* ncurses stuff */
     int col, row;
+    int x_pos = 0, i = 0;
     initscr();
-    getmaxyx(stdscr, row, col);
+    getmaxyx(stdscr, row, col); // stdscr is default screen
     noecho();
     curs_set(0);
     nodelay(stdscr, 1);
     leaveok(stdscr, 1);
     scrollok(stdscr, 0);
 
-    i = 0;
+    /* loop until done */
     while(x_pos < col || LOOP) {
         clear();
 
         // check for wrap on loop
         if (x_pos >= col) x_pos = 0;
 
-        for (int j = 0; j < 23; j++) {
-          int right_pos = x_pos + strlen(chad_frames[i % 7][j]);
-          mvaddnstr(j * SIZE,x_pos, chad_frames[i % 7][j],
-                    (right_pos > col && !LOOP) ? col - x_pos : right_pos);
+        for (int j = 0; j < CHAD_ROWS; j++) {
+            // find position of furthest character to the right
+            int right_pos = x_pos + strlen(chad_frames[i % CHAD_FRAMES][j]);
+            // draw row, checking it doesn't go off screen if not looping
+            mvaddnstr(j * SIZE, x_pos, chad_frames[i % CHAD_FRAMES][j],
+                      (right_pos > col && !LOOP) ? col - x_pos : right_pos);
         }
-        i++;
-        if (!STAY) x_pos++;
+
+        i++; // increment animation counter
+        if (!STAY) x_pos++; // move across screen
+
+        /* Ncurses stuff */
         getch();
         refresh();
+
+        /* animation wait */
         usleep(150000);
     }
 
+    /* Clean up */
     delwin(stdscr);
     endwin();
     refresh();
