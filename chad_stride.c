@@ -4,17 +4,18 @@
 #include <unistd.h> // usleep
 #include <string.h> // strlen
 #include <signal.h>
+#include <stdbool.h>
 
 #define CHAD_FRAMES 7
 #define CHAD_ROWS   24
 
-#define TRUE 1
-#define FALSE 0
-
 #define DEFAULT_SIZE 1
 
-int STAY = FALSE, LOOP = FALSE, SIZE = DEFAULT_SIZE, NOFUCKS = FALSE;
+bool STAY = false, LOOP = false, NOFUCKS = false;
 long SLEEP_TIMER = 150000;
+int SIZE = DEFAULT_SIZE;
+
+const char* ARG_FLAGS = "slfhb:a:"; 
 
 /* Chad frames */
 
@@ -214,17 +215,15 @@ void usage(const int exit_code) {
     exit(exit_code);
 }
 
-int main(int argc, char *argv[]) {
+void handle_args(int argc, char *argv[]) {
     char c;
-
-    /* Handle Arguments */
-    while ((c = getopt (argc, argv, "slfhb:a:")) != -1) {
+    while ((c = getopt(argc, argv, ARG_FLAGS)) != -1) {
         switch (c) {
             case 's':
-                STAY = TRUE;
+                STAY = true;
                 break;
             case 'l':
-                LOOP = TRUE;
+                LOOP = true;
                 break;
             case 'b': {
                 char* p_end;
@@ -240,7 +239,7 @@ int main(int argc, char *argv[]) {
                 break;
             }
             case 'f':
-                NOFUCKS = TRUE;
+                NOFUCKS = true;
                 break;
             case 'a': {
                 char* p_end;
@@ -262,6 +261,13 @@ int main(int argc, char *argv[]) {
         }
     }
 
+
+}
+
+int main(int argc, char *argv[]) {
+    handle_args(argc, argv);
+
+    // set signals
     if (NOFUCKS) {
         signal(SIGHUP , SIG_IGN);
         signal(SIGINT , SIG_IGN);
