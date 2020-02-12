@@ -217,6 +217,16 @@ void usage(const int exit_code) {
     exit(exit_code);
 }
 
+long arg_to_long(char* arg) {
+    char* p_end;
+    long modifier = strtol(optarg, &p_end, 10);
+    if (p_end == optarg) {
+        fprintf(stderr, "Invalid digits for flag -b\n");
+        usage(1);
+    }
+    return modifier;
+}
+
 void handle_args(int argc, char *argv[]) {
     char c;
     while ((c = getopt(argc, argv, ARG_FLAGS)) != -1) {
@@ -228,15 +238,10 @@ void handle_args(int argc, char *argv[]) {
                 LOOP = true;
                 break;
             case 'b': {
-                char* p_end;
-                long modifier = strtol(optarg, &p_end, 10);
-                if (p_end == optarg) {
-                    fprintf(stderr, "Invalid digits for flag -b\n");
-                    usage(1);
-                }
+                long modifier = arg_to_long(optarg);
                 if (modifier < 0) {
-                    fprintf(stderr, "Error: invalid argument for b flag. Must be positive!\n");
-                } 
+                    fprintf(stderr, "Error: invalid argument -b. Must be positive!\n");
+                }
                 SIZE += modifier; 
                 break;
             }
@@ -244,14 +249,9 @@ void handle_args(int argc, char *argv[]) {
                 NOFUCKS = true;
                 break;
             case 'a': {
-                char* p_end;
-                long modifier = strtol(optarg, &p_end, 10);
-                if (p_end == optarg) {
-                    fprintf(stderr, "Invalid digits for flag -b\n");
-                    usage(1);
-                }
+                long modifier = arg_to_long(optarg);
                 if (modifier < 0) {
-                    fprintf(stderr, "Error: Access isn't positive!\n");
+                    fprintf(stderr, "Error: Access flag isn't positive!\n");
                 }
                 SLEEP_TIMER = modifier; 
                 break;
