@@ -9,6 +9,8 @@
 #define CHAD_FRAMES 7
 #define CHAD_ROWS   24
 
+#define AVG_CHAD_WIDTH 30
+
 #define DEFAULT_SIZE 1
 
 bool STAY = false, LOOP = false, NOFUCKS = false;
@@ -278,9 +280,11 @@ int main(int argc, char *argv[]) {
 
     /* ncurses stuff */
     int col, row;
-    int x_pos = 0, i = 0;
     initscr();
     getmaxyx(stdscr, row, col); // stdscr is default screen
+    // center chad if stay is set
+    int x_pos = STAY ? (col / 2) - (AVG_CHAD_WIDTH / 2): 0;
+    int i = 0;
     noecho();
     curs_set(0);
     nodelay(stdscr, 1);
