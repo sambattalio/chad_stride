@@ -9,7 +9,7 @@
 #define CHAD_FRAMES 7
 #define CHAD_ROWS   24
 
-#define AVG_CHAD_WIDTH 30
+#define AVG_CHAD_WIDTH 25
 
 #define DEFAULT_SIZE 1
 
