@@ -7,7 +7,9 @@ chad_stride: 	chad_stride.c
 	$(CC) $(CFLAGS) -o $@ $^ $(LIB)
 
 install: 	chad_stride
-	install -m 755 -D chad_stride $(PREFIX)/bin/chad_stride
+	mkdir -p $(PREFIX)/bin
+	install -m 755 chad_stride $(PREFIX)/bin/chad_stride
+	ln -s $(PREFIX)/bin/chad_stride $(PREFIX)/bin/cs
 
 uninstall:
 	rm -f $(PREFIX)/bin/chad_stride
