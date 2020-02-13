@@ -13,6 +13,7 @@ install: 	chad_stride
 
 uninstall:
 	rm -f $(PREFIX)/bin/chad_stride
+	rm -f $(PREFIX)/bin/cs
 
 clean:
 	rm -f chad_stride
