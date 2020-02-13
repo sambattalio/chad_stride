@@ -46,6 +46,7 @@ make install
 ```
 
 **Homebrew:**
+
 `brew install sambattalio/homebrew-formulae/chad_stride`
 
 ### BSD/Linux
