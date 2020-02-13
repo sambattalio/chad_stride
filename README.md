@@ -11,11 +11,11 @@ Like sl & cmatrix, but better.
 On call, chad by default strides across your screen once and exits. However, his activity can be changed
 by the following flags:
 
-* -c [r|g|b|m|c|y]: Change chad's color & enable color changing via keyboard input while running.
+* -c [r|g|b|m|c|y]: Change chad's color & enable color changing via keyboard input while running. (thanks @ginglis13!)
 
 * -a SLEEP_TIME: Adjust sleep rate (in nanoseconds). Small number == faster chad
 
-* -f: Chad ignores signals
+* -f: Chad ignores signals (thanks @pbui!)
 
 * -b SIZE: Increase spacing of chad by SIZE
 
