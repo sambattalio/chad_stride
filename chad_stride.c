@@ -13,11 +13,11 @@
 
 #define DEFAULT_SIZE 1
 
-bool STAY = false, LOOP = false, NOFUCKS = false;
+bool STAY = false, LOOP = false, NOFUCKS = false, COLOR = false;
 long SLEEP_TIMER = 150000;
-int SIZE = DEFAULT_SIZE;
+int SIZE = DEFAULT_SIZE, PAIR = 1;
 
-const char* ARG_FLAGS = "slfhb:a:"; 
+const char* ARG_FLAGS = "slfhb:a:c:";
 
 /* Chad frames */
 
@@ -213,59 +213,10 @@ void usage(const int exit_code) {
             "-b SIZE: Big Chad (each b increases chad)\n"
             "-f: Chad gives no fucks (ignores signals)\n"
             "-a SLEEP_TIME: Adjust sleep timer for chad\n"
+            "-c COLOR: Chad strolls by in the color of your choice (r|g|b|m|c|y)\n"
             "-h: This message\n");
     exit(exit_code);
 }
-
-void handle_args(int argc, char *argv[]) {
-    char c;
-    while ((c = getopt(argc, argv, ARG_FLAGS)) != -1) {
-        switch (c) {
-            case 's':
-                STAY = true;
-                break;
-            case 'l':
-                LOOP = true;
-                break;
-            case 'b': {
-                char* p_end;
-                long modifier = strtol(optarg, &p_end, 10);
-                if (p_end == optarg) {
-                    fprintf(stderr, "Invalid digits for flag -b\n");
-                    usage(1);
-                }
-                if (modifier < 0) {
-                    fprintf(stderr, "Error: invalid argument for b flag. Must be positive!\n");
-                } 
-                SIZE += modifier; 
-                break;
-            }
-            case 'f':
-                NOFUCKS = true;
-                break;
-            case 'a': {
-                char* p_end;
-                long modifier = strtol(optarg, &p_end, 10);
-                if (p_end == optarg) {
-                    fprintf(stderr, "Invalid digits for flag -b\n");
-                    usage(1);
-                }
-                if (modifier < 0) {
-                    fprintf(stderr, "Error: Access isn't positive!\n");
-                }
-                SLEEP_TIMER = modifier; 
-                break;
-            }
-            case 'h':
-                usage(0);
-            default:
-                usage(1);
-        }
-    }
-
-
-}
-
 
 int get_color_pair(char c, int pair){
     switch (c){
@@ -288,6 +239,65 @@ int get_color_pair(char c, int pair){
     }
 }
 
+void handle_args(int argc, char *argv[]) {
+    char c;
+    while ((c = getopt(argc, argv, ARG_FLAGS)) != -1) {
+        switch (c) {
+            case 's':
+                STAY = true;
+                break;
+            case 'l':
+                LOOP = true;
+                break;
+            case 'b': {
+                char* p_end;
+                long modifier = strtol(optarg, &p_end, 10);
+                if (p_end == optarg) {
+                    fprintf(stderr, "Invalid digits for flag -b\n");
+                    usage(1);
+                }
+                if (modifier < 0) {
+                    fprintf(stderr, "Error: invalid argument for b flag. Must be positive!\n");
+                }
+                SIZE += modifier;
+                break;
+            }
+            case 'f':
+                NOFUCKS = true;
+                break;
+            case 'a': {
+                char* p_end;
+                long modifier = strtol(optarg, &p_end, 10);
+                if (p_end == optarg) {
+                    fprintf(stderr, "Invalid digits for flag -b\n");
+                    usage(1);
+                }
+                if (modifier < 0) {
+                    fprintf(stderr, "Error: Access isn't positive!\n");
+                }
+                SLEEP_TIMER = modifier;
+                break;
+            }
+            case 'c':
+                COLOR = true;
+				/* check ascii char val a-z */
+				if ( *optarg > 96 && *optarg < 173) {
+					PAIR = get_color_pair(*optarg, PAIR);
+				} else {
+                    fprintf(stderr, "Error: invalid color value. Must be (w|r|g|b|m|c|y)\n\n");
+					usage(1);
+				}
+                break;
+            case 'h':
+                usage(0);
+            default:
+                usage(1);
+        }
+    }
+
+
+}
+
 
 int main(int argc, char *argv[]) {
     handle_args(argc, argv);
@@ -304,7 +314,10 @@ int main(int argc, char *argv[]) {
     /* ncurses stuff */
     int col, row;
     initscr();
-    if (COLOR) start_color();
+
+	/* start color if term supports it */
+    if (COLOR && has_colors()) start_color();
+
     getmaxyx(stdscr, row, col); // stdscr is default screen
     // center chad if stay is set
     int x_pos = STAY ? (col / 2) - (AVG_CHAD_WIDTH / 2): 0;
@@ -325,14 +338,13 @@ int main(int argc, char *argv[]) {
     init_pair(7, COLOR_MAGENTA, COLOR_BLACK);
 
 	/* default to white */
-    int pair = 1;
     int old_color = COLOR_WHITE;
 
     /* loop until done */
     while(x_pos < col || LOOP) {
 
 		/* set color */
-        attron(COLOR_PAIR(pair));
+        attron(COLOR_PAIR(PAIR));
 
         // check for wrap on loop
         if (x_pos >= col) x_pos = 0;
@@ -354,8 +366,8 @@ int main(int argc, char *argv[]) {
 		/* Color stuff */
         char c = getch();
 
-		if (COLOR){
-        	pair = get_color_pair(c, pair);
+		if (COLOR && has_colors()){
+        	PAIR = get_color_pair(c, PAIR);
 		}
 
         clear();
