@@ -348,7 +348,7 @@ int main(int argc, char *argv[]) {
             // find position of furthest character to the right
             int right_pos = x_pos + strlen(chad_frames[i % CHAD_FRAMES][j]);
             // draw row, checking it doesn't go off screen if not looping
-            mvaddnstr(j * SIZE, x_pos, chad_frames[i % CHAD_FRAMES][j],
+            mvaddnstr(j * SIZE + row/2 - CHAD_ROWS/2, x_pos, chad_frames[i % CHAD_FRAMES][j],
                     (right_pos > col && !LOOP) ? col - x_pos : right_pos);
         }
 
