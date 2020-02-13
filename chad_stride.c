@@ -337,7 +337,8 @@ int main(int argc, char *argv[]) {
 
     /* loop until done */
     while(x_pos < col || LOOP) {
-
+        // call this just in case resize of term
+        getmaxyx(stdscr, row, col);
         /* set color */
         attron(COLOR_PAIR(PAIR));
 
