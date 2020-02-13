@@ -1,4 +1,4 @@
-# Chad Stride
+# Chad Stride ![ouch](https://img.shields.io/badge/-ouch!-pink) ![alpha](https://img.shields.io/badge/version-alpha-green)
 
 Like sl & cmatrix, but better.
 
