@@ -1,4 +1,4 @@
-<h1 align="center"><img src="https://chadpaste.com/images/chad.gif" alt="logo" width=100px height=auto></br>cs (Chad Stride)</h1>
+<h1 align="center"><img src="https://chadpaste.com/images/chad.gif" alt="logo" width=100px height=auto></br>Chad Stride</h1>
 <h5 align="center"><i align="center">Like sl & cmatrix, but better.</i></h5>
 
 <p align="center">
