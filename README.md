@@ -34,3 +34,5 @@ by the following flags:
 * `-l`: infinite looping
 
 * `-s`: Chad stays in the center, striding in place.
+
+* `-m MESSAGE`: Display message at bottom center of screen
