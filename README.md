@@ -14,9 +14,8 @@
   <img src="https://img.shields.io/badge/chad%3F-af-red.svg">
   <br>
 
-  <img src="https://chadpaste.com/f/rze.gif" alt="Chad">
+  <img src="https://chadpaste.com/f/kzy.gif" alt="Chad">
 </p>
-
 
 ## Features
 
