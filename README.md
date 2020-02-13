@@ -22,9 +22,10 @@
 On call, chad by default strides across your screen once and exits. However, his activity can be changed
 by the following flags:
 
-* `-c [r|g|b|m|c|y]`: Change chad's color & enable color changing via keyboard input while running. (thanks @ginglis13!)
+* `-c [r|g|b|m|c|y]`: Change chad's color & enable color changing via keyboard input while running.
+(thanks @ginglis13!)
 
-* `-a SLEEP_TIME`: Adjust sleep rate (in nanoseconds). Small number == faster chad
+* `-a SLEEP_TIME`: Adjust sleep rate (in nanoseconds). Small number == faster chad. Defaults to 150000.
 
 * `-f`: Chad ignores signals (thanks @pbui!)
 
