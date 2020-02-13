@@ -37,7 +37,18 @@ by the following flags:
 
 ## Installation
 
-### Mac/BSD/Linux
+### Mac
+
+**Install from source:**
+```
+make
+make install
+```
+
+**Homebrew:**
+`brew install sambattalio/homebrew-formulae/chad_stride`
+
+### BSD/Linux
 
 **Install:**
 ```
