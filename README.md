@@ -34,3 +34,23 @@ by the following flags:
 * `-l`: infinite looping
 
 * `-s`: Chad stays in the center, striding in place.
+
+## Installation
+
+### Mac/BSD/Linux
+
+**Install:**
+```
+make
+make install
+```
+
+**Uninstall:**
+```
+make uninstall
+```
+
+### Windows
+
+Someone please tell me
+
