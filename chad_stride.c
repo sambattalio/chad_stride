@@ -260,38 +260,38 @@ void handle_args(int argc, char *argv[]) {
                 LOOP = true;
                 break;
             case 'b': {
-                long modifier = arg_to_long(optarg);
-                if (modifier < 0) {
-                    fprintf(stderr, "Error: invalid argument -b. Must be positive!\n");
-                }
-                SIZE += modifier; 
-                break;
-            }
+                          long modifier = arg_to_long(optarg);
+                          if (modifier < 0) {
+                              fprintf(stderr, "Error: invalid argument -b. Must be positive!\n");
+                          }
+                          SIZE += modifier; 
+                          break;
+                      }
             case 'f':
-                NOFUCKS = true;
-                break;
+                      NOFUCKS = true;
+                      break;
             case 'a': {
-                long modifier = arg_to_long(optarg);
-                if (modifier < 0) {
-                    fprintf(stderr, "Error: Access flag isn't positive!\n");
-                }
-                SLEEP_TIMER = modifier;
-                break;
-            }
+                          long modifier = arg_to_long(optarg);
+                          if (modifier < 0) {
+                              fprintf(stderr, "Error: Access flag isn't positive!\n");
+                          }
+                          SLEEP_TIMER = modifier;
+                          break;
+                      }
             case 'c':
-                COLOR = true;
-                /* check ascii char val a-z */
-                if ( *optarg > 96 && *optarg < 173) {
-                    PAIR = get_color_pair(*optarg, PAIR);
-                } else {
-                    fprintf(stderr, "Error: invalid color value. Must be (w|r|g|b|m|c|y)\n\n");
-                    usage(1);
-                }
-                break;
+                      COLOR = true;
+                      /* check ascii char val a-z */
+                      if ( ((unsigned char) *optarg) > 96 && ((unsigned char) *optarg) < 173) {
+                          PAIR = get_color_pair(*optarg, PAIR);
+                      } else {
+                          fprintf(stderr, "Error: invalid color value. Must be (w|r|g|b|m|c|y)\n\n");
+                          usage(1);
+                      }
+                      break;
             case 'h':
-                usage(0);
+                      usage(0);
             default:
-                usage(1);
+                      usage(1);
         }
     }
 }
@@ -313,7 +313,7 @@ int main(int argc, char *argv[]) {
     int col, row;
     initscr();
 
-	/* start color if term supports it */
+    /* start color if term supports it */
     if (COLOR && has_colors()) start_color();
 
     getmaxyx(stdscr, row, col); // stdscr is default screen
@@ -326,7 +326,7 @@ int main(int argc, char *argv[]) {
     leaveok(stdscr, 1);
     scrollok(stdscr, 0);
 
-	  /* initialize colors */
+    /* initialize colors */
     init_pair(1, COLOR_WHITE, COLOR_BLACK);
     init_pair(2, COLOR_BLUE, COLOR_BLACK);
     init_pair(3, COLOR_RED, COLOR_BLACK);
@@ -335,13 +335,10 @@ int main(int argc, char *argv[]) {
     init_pair(6, COLOR_YELLOW, COLOR_BLACK);
     init_pair(7, COLOR_MAGENTA, COLOR_BLACK);
 
-	  /* default to white */
-    int old_color = COLOR_WHITE;
-
     /* loop until done */
     while(x_pos < col || LOOP) {
 
-		````/* set color */
+        /* set color */
         attron(COLOR_PAIR(PAIR));
 
         // check for wrap on loop
@@ -361,11 +358,11 @@ int main(int argc, char *argv[]) {
         /* Ncurses stuff */
         refresh();
 
-		````/* Color stuff */
+        /* Color stuff */
         char c = getch();
 
         if (COLOR && has_colors()){
-              PAIR = get_color_pair(c, PAIR);
+            PAIR = get_color_pair(c, PAIR);
         }
 
         clear();
