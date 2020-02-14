@@ -376,7 +376,7 @@ int main(int argc, char *argv[]) {
 
 	/* display message */
 	if ( MES ) {
-		int mesg_x = (col / 2 + strlen(message) / 2 > col ) ? (col - strlen(message)) : (col / 2 ) - strlen(message) / 2 ;
+		int mesg_x = x_pos + strlen(message)/2;
 		int mesg_y = (3*row/4 + CHAD_ROWS*SIZE/4);
 		mvprintw(mesg_y, mesg_x, "%s", message);
 	}
