@@ -53,7 +53,7 @@ make install
 
 ### BSD/Linux
 
-**Install:**
+**Install from source:**
 ```
 make
 make install
@@ -63,6 +63,12 @@ make install
 ```
 make uninstall
 ```
+
+**AUR:**
+
+`yay -S chad_stride`
+
+*if you run into any issues with the AUR package, contact @ginglis13*
 
 ### Windows
 
