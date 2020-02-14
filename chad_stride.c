@@ -12,12 +12,14 @@
 #define AVG_CHAD_WIDTH 25
 
 #define DEFAULT_SIZE 1
+#define MAX_MESSAGE_SIZE 50
 
-bool STAY = false, LOOP = false, NOFUCKS = false, COLOR = false;
+bool STAY = false, LOOP = false, NOFUCKS = false, COLOR = false, MES = false;
 long SLEEP_TIMER = 150000;
 int SIZE = DEFAULT_SIZE, PAIR = 1;
 
-const char* ARG_FLAGS = "slfhb:a:c:";
+const char* ARG_FLAGS = "slfhb:a:c:m:";
+char message[MAX_MESSAGE_SIZE+1];
 
 /* Chad frames */
 
@@ -214,6 +216,7 @@ void usage(const int exit_code) {
             "-f: Chad gives no fucks (ignores signals)\n"
             "-a SLEEP_TIME: Adjust sleep timer for chad\n"
             "-c COLOR: Chad strolls by in the color of your choice (r|g|b|m|c|y)\n"
+	    "-m MESSAGE: Display message under chad [capped at 50 characters]\n"
             "-h: This message\n");
     exit(exit_code);
 }
@@ -259,6 +262,17 @@ void handle_args(int argc, char *argv[]) {
             case 'l':
                 LOOP = true;
                 break;
+	    case 'm': {
+			MES = true;
+			size_t input_length = strlen(optarg);
+			if ( input_length > MAX_MESSAGE_SIZE ) {
+				fprintf(stderr, "Message size is capped at %d characters.\n", MAX_MESSAGE_SIZE);
+			}
+			input_length = input_length < MAX_MESSAGE_SIZE ? input_length : MAX_MESSAGE_SIZE;
+			message[MAX_MESSAGE_SIZE] = '\0';
+			strncpy(message, optarg, input_length);
+			break;
+		      }
             case 'b': {
                           long modifier = arg_to_long(optarg);
                           if (modifier < 0) {
@@ -317,6 +331,7 @@ int main(int argc, char *argv[]) {
     if (COLOR && has_colors()) start_color();
 
     getmaxyx(stdscr, row, col); // stdscr is default screen
+
     // center chad if stay is set
     int x_pos = STAY ? (col / 2) - (AVG_CHAD_WIDTH / 2): 0;
     int i = 0;
@@ -325,7 +340,7 @@ int main(int argc, char *argv[]) {
     nodelay(stdscr, 1);
     leaveok(stdscr, 1);
     scrollok(stdscr, 0);
-
+    
     /* initialize colors */
     init_pair(1, COLOR_WHITE, COLOR_BLACK);
     init_pair(2, COLOR_BLUE, COLOR_BLACK);
@@ -359,6 +374,13 @@ int main(int argc, char *argv[]) {
         /* Ncurses stuff */
         refresh();
 
+	/* display message */
+	if ( MES ) {
+		int mesg_x = x_pos + strlen(message)/2;
+		int mesg_y = (3*row/4 + CHAD_ROWS*SIZE/4);
+		mvprintw(mesg_y, mesg_x, "%s", message);
+	}
+
         /* Color stuff */
         char c = getch();
 
@@ -371,7 +393,7 @@ int main(int argc, char *argv[]) {
         /* animation wait */
         usleep(SLEEP_TIMER);
     }
-
+	
     /* Clean up */
     delwin(stdscr);
     endwin();

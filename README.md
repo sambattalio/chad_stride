@@ -35,6 +35,8 @@ by the following flags:
 
 * `-s`: Chad stays in the center, striding in place.
 
+* `-m MESSAGE`: Display message at bottom center of screen
+
 ## Installation
 
 ### Mac
@@ -65,4 +67,3 @@ make uninstall
 ### Windows
 
 Someone please tell me
-
