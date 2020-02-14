@@ -36,3 +36,34 @@ by the following flags:
 * `-s`: Chad stays in the center, striding in place.
 
 * `-m MESSAGE`: Display message at bottom center of screen
+
+## Installation
+
+### Mac
+
+**Install from source:**
+```
+make
+make install
+```
+
+**Homebrew:**
+
+`brew install sambattalio/homebrew-formulae/chad_stride`
+
+### BSD/Linux
+
+**Install:**
+```
+make
+make install
+```
+
+**Uninstall:**
+```
+make uninstall
+```
+
+### Windows
+
+Someone please tell me
