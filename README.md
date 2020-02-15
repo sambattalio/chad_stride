@@ -68,8 +68,6 @@ make uninstall
 
 `yay -S chad_stride`
 
-*if you run into any issues with the AUR package, contact @ginglis13*
-
 ### Windows
 
 Someone please tell me
