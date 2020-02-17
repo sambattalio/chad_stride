@@ -8,9 +8,7 @@
 
 #define CHAD_FRAMES 7
 #define CHAD_ROWS   24
-
 #define AVG_CHAD_WIDTH 25
-
 #define DEFAULT_SIZE 1
 #define MAX_MESSAGE_SIZE 50
 
@@ -208,6 +206,11 @@ const char* chad_frames[CHAD_FRAMES][CHAD_ROWS] = {
     }
 };
 
+/* usage - print usage message and exit
+* exit_code: Integer exit code value (0 success, 1 error, ...)
+*
+* Returns: void (exits program on run)
+*/
 void usage(const int exit_code) {
     printf("./chad_stride -[flags]\n"
             "-s: Chad stays still and doesn't move forever\n"
@@ -221,6 +224,12 @@ void usage(const int exit_code) {
     exit(exit_code);
 }
 
+/* get_color_pair - Helper function to turn char to color value
+* c: character input representing desired color
+* pair: previous pair value
+* 
+* returns: New color pair based on input
+*/
 int get_color_pair(char c, int pair){
     switch (c){
         case 'w':
@@ -242,6 +251,11 @@ int get_color_pair(char c, int pair){
     }
 } 
 
+/* arg_to_long: converts char* to long
+* arg: string (should be a number)
+*
+* returns: converted long from string
+*/
 long arg_to_long(char* arg) {
     char* p_end;
     long modifier = strtol(optarg, &p_end, 10);
@@ -262,50 +276,50 @@ void handle_args(int argc, char *argv[]) {
             case 'l':
                 LOOP = true;
                 break;
-	    case 'm': {
-			MES = true;
-			size_t input_length = strlen(optarg);
-			if ( input_length > MAX_MESSAGE_SIZE ) {
-				fprintf(stderr, "Message size is capped at %d characters.\n", MAX_MESSAGE_SIZE);
-			}
-			input_length = input_length < MAX_MESSAGE_SIZE ? input_length : MAX_MESSAGE_SIZE;
-			message[MAX_MESSAGE_SIZE] = '\0';
-			strncpy(message, optarg, input_length);
-			break;
-		      }
+            case 'm': {
+                MES = true;
+                size_t input_length = strlen(optarg);
+                if ( input_length > MAX_MESSAGE_SIZE ) {
+                    fprintf(stderr, "Message size is capped at %d characters.\n", MAX_MESSAGE_SIZE);
+                }
+                input_length = input_length < MAX_MESSAGE_SIZE ? input_length : MAX_MESSAGE_SIZE;
+                message[MAX_MESSAGE_SIZE] = '\0';
+                strncpy(message, optarg, input_length);
+                break;
+                }
             case 'b': {
-                          long modifier = arg_to_long(optarg);
-                          if (modifier < 0) {
-                              fprintf(stderr, "Error: invalid argument -b. Must be positive!\n");
-                          }
-                          SIZE += modifier; 
-                          break;
-                      }
+                long modifier = arg_to_long(optarg);
+                if (modifier < 0) {
+                    fprintf(stderr, "Error: invalid argument -b. Must be positive!\n");
+                }
+                SIZE += modifier; 
+                break;
+            }
             case 'f':
-                      NOFUCKS = true;
-                      break;
+                NOFUCKS = true;
+                break;
             case 'a': {
-                          long modifier = arg_to_long(optarg);
-                          if (modifier < 0) {
-                              fprintf(stderr, "Error: Access flag isn't positive!\n");
-                          }
-                          SLEEP_TIMER = modifier;
-                          break;
-                      }
+                long modifier = arg_to_long(optarg);
+                if (modifier < 0) {
+                    fprintf(stderr, "Error: Access flag isn't positive!\n");
+                }
+                SLEEP_TIMER = modifier;
+                break;
+            }
             case 'c':
-                      COLOR = true;
-                      /* check ascii char val a-z */
-                      if ( ((unsigned char) *optarg) > 96 && ((unsigned char) *optarg) < 173) {
-                          PAIR = get_color_pair(*optarg, PAIR);
-                      } else {
-                          fprintf(stderr, "Error: invalid color value. Must be (w|r|g|b|m|c|y)\n\n");
-                          usage(1);
-                      }
-                      break;
+                COLOR = true;
+                /* check ascii char val a-z */
+                if ( ((unsigned char) *optarg) > 96 && ((unsigned char) *optarg) < 173) {
+                    PAIR = get_color_pair(*optarg, PAIR);
+                } else {
+                    fprintf(stderr, "Error: invalid color value. Must be (w|r|g|b|m|c|y)\n\n");
+                    usage(1);
+                }
+                break;
             case 'h':
-                      usage(0);
+                usage(0);
             default:
-                      usage(1);
+                usage(1);
         }
     }
 }
@@ -364,22 +378,24 @@ int main(int argc, char *argv[]) {
             // find position of furthest character to the right
             int right_pos = x_pos + strlen(chad_frames[i % CHAD_FRAMES][j]);
             // draw row, checking it doesn't go off screen if not looping
-            mvaddnstr(j * SIZE + row/2 - (CHAD_ROWS*SIZE/2), x_pos, chad_frames[i % CHAD_FRAMES][j],
-                    (right_pos > col && !LOOP) ? col - x_pos : right_pos);
+            mvaddnstr(j * SIZE + row/2 - (CHAD_ROWS*SIZE/2), x_pos,
+                chad_frames[i % CHAD_FRAMES][j],
+                (right_pos > col && !LOOP) ? col - x_pos : right_pos);
         }
 
         i++; // increment animation counter
         if (!STAY) x_pos++; // move across screen
+        else x_pos = (col / 2) - (AVG_CHAD_WIDTH / 2);
 
         /* Ncurses stuff */
         refresh();
 
-	/* display message */
-	if ( MES ) {
-		int mesg_x = x_pos + strlen(message)/2;
-		int mesg_y = (3*row/4 + CHAD_ROWS*SIZE/4);
-		mvprintw(mesg_y, mesg_x, "%s", message);
-	}
+        /* display message */
+        if ( MES ) {
+            int mesg_x = x_pos + (strlen(message) / 2);
+            int mesg_y = ((3 * row / 4) + (CHAD_ROWS * SIZE / 4));
+            mvprintw(mesg_y, mesg_x, "%s", message);
+        }
 
         /* Color stuff */
         char c = getch();
