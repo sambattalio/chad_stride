@@ -392,9 +392,17 @@ int main(int argc, char *argv[]) {
 
         /* display message */
         if ( MES ) {
-            int mesg_x = x_pos + (strlen(message) / 2);
+            int mesg_x = x_pos + AVG_CHAD_WIDTH / 2 - (strlen(message) / 2);
             int mesg_y = ((3 * row / 4) + (CHAD_ROWS * SIZE / 4));
-            mvprintw(mesg_y, mesg_x, "%s", message);
+
+	    if ( mesg_x + strlen(message) >= col && !LOOP ){
+		mvaddnstr(mesg_y, mesg_x, message, col - mesg_x);
+	    } else if ( mesg_x + strlen(message) >= col && LOOP ) {
+		mvaddnstr(mesg_y, mesg_x, message, col - mesg_x);
+		mvaddnstr(mesg_y, 0, message + col - mesg_x, strlen(message) - col + mesg_x);
+	    } else {
+		mvaddnstr(mesg_y, mesg_x, message, strlen(message));
+	    }
         }
 
         /* Color stuff */
