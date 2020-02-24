@@ -12,11 +12,11 @@
 #define DEFAULT_SIZE 1
 #define MAX_MESSAGE_SIZE 50
 
-bool STAY = false, LOOP = false, NOFUCKS = false, COLOR = false, MES = false;
+bool STAY = false, LOOP = false, NOFUCKS = false, COLOR = false, MES = false, REVERSE = false;
 long SLEEP_TIMER = 150000;
 int SIZE = DEFAULT_SIZE, PAIR = 1;
 
-const char* ARG_FLAGS = "slfhb:a:c:m:";
+const char* ARG_FLAGS = "slrfhb:a:c:m:";
 char message[MAX_MESSAGE_SIZE+1];
 
 /* Chad frames */
@@ -215,6 +215,7 @@ void usage(const int exit_code) {
     printf("./chad_stride -[flags]\n"
             "-s: Chad stays still and doesn't move forever\n"
             "-l: Chad walks infinitely\n"
+            "-r: Chad walks backwards\n"
             "-b SIZE: Big Chad (each b increases chad)\n"
             "-f: Chad gives no fucks (ignores signals)\n"
             "-a SLEEP_TIME: Adjust sleep timer for chad\n"
@@ -275,6 +276,9 @@ void handle_args(int argc, char *argv[]) {
                 break;
             case 'l':
                 LOOP = true;
+                break;
+            case 'r':
+                REVERSE = true;
                 break;
             case 'm': {
                 MES = true;
@@ -365,14 +369,25 @@ int main(int argc, char *argv[]) {
     init_pair(7, COLOR_MAGENTA, COLOR_BLACK);
 
     /* loop until done */
-    while(x_pos < col || LOOP) {
+
+    int endpoint = col;
+    if (REVERSE) {
+        endpoint = 0;
+        x_pos = col;
+    }
+
+    while(x_pos != endpoint || LOOP) {
         // call this just in case resize of term
         getmaxyx(stdscr, row, col);
         /* set color */
         attron(COLOR_PAIR(PAIR));
 
         // check for wrap on loop
-        if (x_pos >= col) x_pos = 0;
+        if (REVERSE) {
+            if (x_pos <= 0) x_pos = col;
+        } else {
+            if (x_pos >= col) x_pos = 0;
+        }
 
         for (int j = 0; j < CHAD_ROWS; j++) {
             // find position of furthest character to the right
@@ -384,8 +399,15 @@ int main(int argc, char *argv[]) {
         }
 
         i++; // increment animation counter
-        if (!STAY) x_pos++; // move across screen
-        else x_pos = (col / 2) - (AVG_CHAD_WIDTH / 2);
+        if (!STAY) {
+            if (REVERSE) {
+                x_pos--;
+            } else {
+                x_pos++; // move across screen
+            }
+        } else {
+            x_pos = (col / 2) - (AVG_CHAD_WIDTH / 2);
+        }
 
         /* Ncurses stuff */
         refresh();
