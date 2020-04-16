@@ -12,13 +12,12 @@
 #define DEFAULT_SIZE 1
 #define MAX_MESSAGE_SIZE 50
 
-bool STAY = false, LOOP = false, NOFUCKS = false, COLOR = false, MES = false, SPEAK = false, REVERSE = false;
+bool RAINBOW = false, NORAINBOW = false, STAY = false, LOOP = false, NOFUCKS = false, COLOR = false, MES = false, REVERSE = false;
 long SLEEP_TIMER = 150000;
 int SIZE = DEFAULT_SIZE, PAIR = 1;
 
-const char* ARG_FLAGS = "slrfhb:a:c:m:t:";
+const char* ARG_FLAGS = "slrfhRb:a:c:m:";
 char message[MAX_MESSAGE_SIZE+1];
-char speech[MAX_MESSAGE_SIZE+1];
 
 /* Chad frames */
 
@@ -222,8 +221,9 @@ void usage(const int exit_code) {
             "-a SLEEP_TIME: Adjust sleep timer for chad\n"
             "-c COLOR: Chad strolls by in the color of your choice (r|g|b|m|c|y)\n"
 	    "-m MESSAGE: Display message under chad [capped at 50 characters]\n"
-      "-t TALK: Have Chad say something!\n"
+      "-R RAINBOW: Have Chad stroll with a rainbow effect\n"
             "-h: This message\n");
+ 
     exit(exit_code);
 }
 
@@ -293,20 +293,6 @@ void handle_args(int argc, char *argv[]) {
                 strncpy(message, optarg, input_length);
                 break;
                 }
-            case 't': {
-                SPEAK = true;
-                size_t input_length = strlen(optarg);
-
-                if ( input_length > MAX_MESSAGE_SIZE ) {
-                    fprintf(stderr, "Message size is capped at %d characters.\n", MAX_MESSAGE_SIZE);
-                }
-
-                input_length = input_length < MAX_MESSAGE_SIZE ? input_length : MAX_MESSAGE_SIZE;
-                speech[MAX_MESSAGE_SIZE] = '\0';
-                strncpy(speech, optarg, input_length);
-                break;
-            }
-
             case 'b': {
                 long modifier = arg_to_long(optarg);
                 if (modifier < 0) {
@@ -326,7 +312,20 @@ void handle_args(int argc, char *argv[]) {
                 SLEEP_TIMER = modifier;
                 break;
             }
+            case 'R':
+            {              
+                COLOR = true;
+                RAINBOW = true;
+                PAIR = 1;
+                if(NORAINBOW)
+                {
+                  fprintf(stderr, "Error: Cannot do rainbow and color\n");
+                  usage(1);
+                }
+                break;
+            }
             case 'c':
+                NORAINBOW = true;
                 COLOR = true;
                 /* check ascii char val a-z */
                 if ( ((unsigned char) *optarg) > 96 && ((unsigned char) *optarg) < 173) {
@@ -348,6 +347,8 @@ void handle_args(int argc, char *argv[]) {
 int main(int argc, char *argv[]) {
     handle_args(argc, argv);
 
+    int rainbowIterator = 1;
+
     // set signals
     if (NOFUCKS) {
         signal(SIGHUP , SIG_IGN);
@@ -355,33 +356,6 @@ int main(int argc, char *argv[]) {
         signal(SIGPIPE, SIG_IGN);
         signal(SIGTERM, SIG_IGN);
         signal(SIGTSTP, SIG_IGN);
-    }
-
-    if (SPEAK)
-    {
-      char buffer1[MAX_MESSAGE_SIZE];
-      char buffer2[MAX_MESSAGE_SIZE];
-      char buffer3[MAX_MESSAGE_SIZE];
-      char space[] = "  ";
-
-      strcpy(buffer1, chad_frames[0][8]);
-      strcat(buffer1, space);
-      strcat(buffer1, speech);
-      
-      strcpy(buffer2, chad_frames[1][8]);
-      strcat(buffer2, space);
-      strcat(buffer2, speech);
-
-      strcpy(buffer3, chad_frames[2][8]);
-      strcat(buffer3, space);
-      strcat(buffer3, speech);
-     
-
-      chad_frames[0][8] = buffer1;
-      chad_frames[1][8] = buffer2;
-      chad_frames[2][8] = buffer3;
-
-
     }
 
     /* ncurses stuff */
@@ -477,6 +451,15 @@ int main(int argc, char *argv[]) {
             PAIR = get_color_pair(c, PAIR);
         }
 
+        if(RAINBOW && !NORAINBOW)
+        {
+            PAIR = rainbowIterator;
+            if(rainbowIterator < 7)
+              rainbowIterator++;
+            else
+              rainbowIterator = 1;
+        }
+  
         clear();
 
         /* animation wait */
