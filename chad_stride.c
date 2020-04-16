@@ -221,7 +221,7 @@ void usage(const int exit_code) {
             "-a SLEEP_TIME: Adjust sleep timer for chad\n"
             "-c COLOR: Chad strolls by in the color of your choice (r|g|b|m|c|y)\n"
 	    "-m MESSAGE: Display message under chad [capped at 50 characters]\n"
-      "-R RAINBOW: Have Chad stroll with a rainbow effect\n"
+      "-R: Have Chad stroll with a rainbow effect\n"
             "-h: This message\n");
  
     exit(exit_code);
