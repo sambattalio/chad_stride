@@ -12,11 +12,11 @@
 #define DEFAULT_SIZE 1
 #define MAX_MESSAGE_SIZE 50
 
-bool STAY = false, LOOP = false, NOFUCKS = false, COLOR = false, MES = false, REVERSE = false;
+bool RAINBOW = false, NORAINBOW = false, STAY = false, LOOP = false, NOFUCKS = false, COLOR = false, MES = false, REVERSE = false;
 long SLEEP_TIMER = 150000;
 int SIZE = DEFAULT_SIZE, PAIR = 1;
 
-const char* ARG_FLAGS = "slrfhb:a:c:m:";
+const char* ARG_FLAGS = "slrfhRb:a:c:m:";
 char message[MAX_MESSAGE_SIZE+1];
 
 /* Chad frames */
@@ -221,7 +221,9 @@ void usage(const int exit_code) {
             "-a SLEEP_TIME: Adjust sleep timer for chad\n"
             "-c COLOR: Chad strolls by in the color of your choice (r|g|b|m|c|y)\n"
 	    "-m MESSAGE: Display message under chad [capped at 50 characters]\n"
+      "-R: Have Chad stroll with a rainbow effect\n"
             "-h: This message\n");
+ 
     exit(exit_code);
 }
 
@@ -310,7 +312,20 @@ void handle_args(int argc, char *argv[]) {
                 SLEEP_TIMER = modifier;
                 break;
             }
+            case 'R':
+            {              
+                COLOR = true;
+                RAINBOW = true;
+                PAIR = 1;
+                if(NORAINBOW)
+                {
+                  fprintf(stderr, "Error: Cannot do rainbow and color\n");
+                  usage(1);
+                }
+                break;
+            }
             case 'c':
+                NORAINBOW = true;
                 COLOR = true;
                 /* check ascii char val a-z */
                 if ( ((unsigned char) *optarg) > 96 && ((unsigned char) *optarg) < 173) {
@@ -331,6 +346,8 @@ void handle_args(int argc, char *argv[]) {
 
 int main(int argc, char *argv[]) {
     handle_args(argc, argv);
+
+    int rainbowIterator = 1;
 
     // set signals
     if (NOFUCKS) {
@@ -434,6 +451,15 @@ int main(int argc, char *argv[]) {
             PAIR = get_color_pair(c, PAIR);
         }
 
+        if(RAINBOW && !NORAINBOW)
+        {
+            PAIR = rainbowIterator;
+            if(rainbowIterator < 7)
+              rainbowIterator++;
+            else
+              rainbowIterator = 1;
+        }
+  
         clear();
 
         /* animation wait */
