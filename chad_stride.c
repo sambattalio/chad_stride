@@ -317,16 +317,21 @@ void handle_args(int argc, char *argv[]) {
                 COLOR = true;
                 RAINBOW = true;
                 PAIR = 1;
-                if(NORAINBOW)
-                {
-                  fprintf(stderr, "Error: Cannot do rainbow and color\n");
-                  usage(1);
-                }
+                //if(NORAINBOW)
+                //{
+                //  fprintf(stderr, "Error: Cannot do rainbow and color\n");
+                //  usage(1);
+                //}
                 break;
             }
             case 'c':
                 NORAINBOW = true;
                 COLOR = true;
+				//if(RAINBOW)
+				//{
+				//	fprintf(stderr, "Error: Cannot do rainbow and color\n");
+				//	usage(1);
+				//}
                 /* check ascii char val a-z */
                 if ( ((unsigned char) *optarg) > 96 && ((unsigned char) *optarg) < 173) {
                     PAIR = get_color_pair(*optarg, PAIR);
@@ -340,6 +345,11 @@ void handle_args(int argc, char *argv[]) {
             default:
                 usage(1);
         }
+
+		if(NORAINBOW && RAINBOW){
+			fprintf(stderr, "Error: Cannot do rainbow and color\n");
+			usage(1);
+		}
     }
 }
 
