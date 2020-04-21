@@ -9,7 +9,7 @@
 #define CHAD_FRAMES 7
 #define CHAD_ROWS   24
 #define AVG_CHAD_WIDTH 25
-#define DEFAULT_SIZE 1
+#define DEFAULT_SIZE 1 
 #define MAX_MESSAGE_SIZE 50
 
 bool RAINBOW = false, NORAINBOW = false, STAY = false, LOOP = false, NOFUCKS = false, COLOR = false, MES = false, REVERSE = false;
