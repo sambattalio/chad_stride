@@ -532,6 +532,7 @@ void handle_args(int argc, char *argv[]) {
 
         if(FLIP && LOOP){
           fprintf(stderr, "Error: Cannot do loop and flip\n");
+		  usage(1);
         }
     }
 }
