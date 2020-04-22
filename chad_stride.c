@@ -12,11 +12,11 @@
 #define DEFAULT_SIZE 1
 #define MAX_MESSAGE_SIZE 50
 
-bool RAINBOW = false, NORAINBOW = false, STAY = false, LOOP = false, NOFUCKS = false, COLOR = false, MES = false, REVERSE = false;
+bool RAINBOW = false, NORAINBOW = false, STAY = false, LOOP = false, NOFUCKS = false, COLOR = false, MES = false, REVERSE = false, FLIP = false;
 long SLEEP_TIMER = 150000;
 int SIZE = DEFAULT_SIZE, PAIR = 1;
 
-const char* ARG_FLAGS = "slrfhRb:a:c:m:";
+const char* ARG_FLAGS = "slrfhRpb:a:c:m:";
 char message[MAX_MESSAGE_SIZE+1];
 
 /* Chad frames */
@@ -407,6 +407,7 @@ void usage(const int exit_code) {
             "-c COLOR: Chad strolls by in the color of your choice (r|g|b|m|c|y)\n"
 	    "-m MESSAGE: Display message under chad [capped at 50 characters]\n"
       "-R: Have Chad stroll with a rainbow effect\n"
+      "-p: Have Chad flip when he hits the edge of the screen\n"
             "-h: This message\n");
 
     exit(exit_code);
@@ -515,16 +516,23 @@ void handle_args(int argc, char *argv[]) {
                     usage(1);
                 }
                 break;
+            case 'p':
+                FLIP = true;
+                break;
             case 'h':
                 usage(0);
             default:
                 usage(1);
         }
 
-		if(NORAINBOW && RAINBOW){
-			fprintf(stderr, "Error: Cannot do rainbow and color\n");
-			usage(1);
-		}
+		    if(NORAINBOW && RAINBOW){
+          fprintf(stderr, "Error: Cannot do rainbow and color\n");
+          usage(1);
+		    }
+
+        if(FLIP && LOOP){
+          fprintf(stderr, "Error: Cannot do loop and flip\n");
+        }
     }
 }
 
@@ -578,26 +586,64 @@ int main(int argc, char *argv[]) {
         x_pos = col;
     }
 
-    while(x_pos != endpoint || LOOP) {
+    while(x_pos != endpoint || LOOP || FLIP) {
+
         // call this just in case resize of term
         getmaxyx(stdscr, row, col);
         /* set color */
         attron(COLOR_PAIR(PAIR));
 
         // check for wrap on loop
-        if (REVERSE) {
-            if (x_pos <= 0) x_pos = col;
-        } else {
-            if (x_pos >= col) x_pos = 0;
+        if(FLIP){
+          if(REVERSE){
+            if(x_pos <= 0) REVERSE = false;
+          }
+          else {
+            if(x_pos + strlen(chad_frames[i % CHAD_FRAMES][1]) + 1 >= col) REVERSE = true;
+          }
+        }
+        else if (REVERSE) {
+          if (x_pos <= 0) x_pos = col;
+          }
+        else {
+          if (x_pos >= col) x_pos = 0;
         }
 
-        for (int j = 0; j < CHAD_ROWS; j++) {
-            // find position of furthest character to the right
-            int right_pos = x_pos + strlen(chad_frames_flip[i % CHAD_FRAMES][j]);
-            // draw row, checking it doesn't go off screen if not looping
-            mvaddnstr(j * SIZE + row/2 - (CHAD_ROWS*SIZE/2), x_pos,
-                chad_frames_flip[i % CHAD_FRAMES][j],
-                (right_pos > col && !LOOP) ? col - x_pos : right_pos);
+        if(!FLIP){
+          for (int j = 0; j < CHAD_ROWS; j++) {
+              // find position of furthest character to the right
+              int right_pos = x_pos + strlen(chad_frames[i % CHAD_FRAMES][j]);
+              // draw row, checking it doesn't go off screen if not looping
+              mvaddnstr(j * SIZE + row/2 - (CHAD_ROWS*SIZE/2), x_pos,
+                  chad_frames[i % CHAD_FRAMES][j],
+                  (right_pos > col && !LOOP) ? col - x_pos : right_pos);
+          }
+        }
+        else {
+          // Start going right
+          if(!REVERSE){
+            for (int j = 0; j < CHAD_ROWS; j++) {
+                // find position of furthest character to the right
+                int right_pos = x_pos + strlen(chad_frames[i % CHAD_FRAMES][j]);
+                // draw row, checking it doesn't go off screen if not looping
+                mvaddnstr(j * SIZE + row/2 - (CHAD_ROWS*SIZE/2), x_pos,
+                    chad_frames[i % CHAD_FRAMES][j],
+                    (right_pos > col && !LOOP && !FLIP) ? col - x_pos : right_pos);
+            }
+
+          }
+          // Go left
+          else{
+            for(int j = 0; j < CHAD_ROWS; j++){
+              // find position of furthest character to the right
+              int right_pos = x_pos + strlen(chad_frames_flip[i % CHAD_FRAMES][j]);
+              // draw row, checking it doesn't go off screen if not looping
+              mvaddnstr(j * SIZE + row/2 - (CHAD_ROWS*SIZE/2), x_pos,
+                  chad_frames_flip[i % CHAD_FRAMES][j],
+                  (right_pos > col && !LOOP && !FLIP) ? col + x_pos : right_pos);
+            }
+          }
+
         }
 
         i++; // increment animation counter
