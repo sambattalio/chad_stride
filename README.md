@@ -37,6 +37,10 @@ by the following flags:
 
 * `-m MESSAGE`: Display message at bottom center of screen
 
+* `-R`: Chad strolls with a rainbow effect
+
+* `-p`: Chad flips when he hits the edge of the screen
+
 ## Installation
 
 ### Mac
