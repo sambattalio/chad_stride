@@ -20,7 +20,6 @@ const char* ARG_FLAGS = "slrfhRpb:a:c:m:";
 char message[MAX_MESSAGE_SIZE+1];
 
 /* Chad frames */
-
 const char* chad_frames[CHAD_FRAMES][CHAD_ROWS] = {
     {
         "                          %",
@@ -397,18 +396,18 @@ const char* chad_frames_flip[CHAD_FRAMES][CHAD_ROWS] = {
 * Returns: void (exits program on run)
 */
 void usage(const int exit_code) {
-    printf("./chad_stride -[flags]\n"
-            "-s: Chad stays still and doesn't move forever\n"
-            "-l: Chad walks infinitely\n"
-            "-r: Chad walks backwards\n"
-            "-b SIZE: Big Chad (each b increases chad)\n"
-            "-f: Chad gives no fucks (ignores signals)\n"
-            "-a SLEEP_TIME: Adjust sleep timer for chad\n"
-            "-c COLOR: Chad strolls by in the color of your choice (r|g|b|m|c|y)\n"
-	    "-m MESSAGE: Display message under chad [capped at 50 characters]\n"
-      "-R: Have Chad stroll with a rainbow effect\n"
-      "-p: Have Chad flip when he hits the edge of the screen\n"
-            "-h: This message\n");
+    printf( "\nUsage:\n  ./chad_stride [flags]\n\nFlags:\n"
+            "  -s              Chad stays still and doesn't move forever\n"
+            "  -l              Chad walks indefinitely\n"
+            "  -r              Chad walks backwards\n"
+            "  -b SIZE         Big Chad (each b increases chad)\n"
+            "  -f              Chad gives no fucks (ignores signals)\n"
+            "  -a SLEEP_TIME   Adjust sleep timer for chad\n"
+            "  -c COLOR        Chad strolls by in the color of your choice (r|g|b|m|c|y)\n"
+            "  -m MESSAGE      Display message under chad [capped at 50 characters]\n"
+            "  -R              Have Chad stroll with a rainbow effect\n"
+            "  -p              Have Chad flip when he hits the edge of the screen\n"
+            "  -h              Display this message\n\n");
 
     exit(exit_code);
 }
@@ -440,7 +439,8 @@ int get_color_pair(char c, int pair){
     }
 }
 
-/* arg_to_long: converts char* to long
+/*
+* arg_to_long: converts char* to long
 * arg: string (should be a number)
 *
 * returns: converted long from string
@@ -455,6 +455,12 @@ long arg_to_long(char* arg) {
     return modifier;
 }
 
+/*
+* arg_to_long: enables flags set by user
+* arg: main args
+*
+* returns: void
+*/
 void handle_args(int argc, char *argv[]) {
     char c;
     while ((c = getopt(argc, argv, ARG_FLAGS)) != -1) {
@@ -468,18 +474,20 @@ void handle_args(int argc, char *argv[]) {
             case 'r':
                 REVERSE = true;
                 break;
-            case 'm': {
+            case 'm':
+            {
                 MES = true;
                 size_t input_length = strlen(optarg);
-                if ( input_length > MAX_MESSAGE_SIZE ) {
+                if (input_length > MAX_MESSAGE_SIZE) {
                     fprintf(stderr, "Message size is capped at %d characters.\n", MAX_MESSAGE_SIZE);
                 }
                 input_length = input_length < MAX_MESSAGE_SIZE ? input_length : MAX_MESSAGE_SIZE;
                 message[MAX_MESSAGE_SIZE] = '\0';
                 strncpy(message, optarg, input_length);
                 break;
-                }
-            case 'b': {
+            }
+            case 'b':
+            {
                 long modifier = arg_to_long(optarg);
                 if (modifier < 0) {
                     fprintf(stderr, "Error: invalid argument -b. Must be positive!\n");
@@ -490,7 +498,8 @@ void handle_args(int argc, char *argv[]) {
             case 'f':
                 NOFUCKS = true;
                 break;
-            case 'a': {
+            case 'a':
+            {
                 long modifier = arg_to_long(optarg);
                 if (modifier < 0) {
                     fprintf(stderr, "Error: Access flag isn't positive!\n");
@@ -509,7 +518,7 @@ void handle_args(int argc, char *argv[]) {
                 NORAINBOW = true;
                 COLOR = true;
                 /* check ascii char val a-z */
-                if ( ((unsigned char) *optarg) > 96 && ((unsigned char) *optarg) < 173) {
+                if (((unsigned char) *optarg) > 96 && ((unsigned char) *optarg) < 173) {
                     PAIR = get_color_pair(*optarg, PAIR);
                 } else {
                     fprintf(stderr, "Error: invalid color value. Must be (w|r|g|b|m|c|y)\n\n");
@@ -525,14 +534,14 @@ void handle_args(int argc, char *argv[]) {
                 usage(1);
         }
 
-		    if(NORAINBOW && RAINBOW){
-          fprintf(stderr, "Error: Cannot do rainbow and color\n");
-          usage(1);
-		    }
+        if(NORAINBOW && RAINBOW){
+            fprintf(stderr, "Error: Cannot do rainbow and color simultaneously\n");
+            usage(1);
+        }
 
         if(FLIP && LOOP){
-          fprintf(stderr, "Error: Cannot do loop and flip\n");
-		  usage(1);
+            fprintf(stderr, "Error: Cannot do loop and flip simultaneously\n");
+            usage(1);
         }
     }
 }
@@ -580,7 +589,6 @@ int main(int argc, char *argv[]) {
     init_pair(7, COLOR_MAGENTA, COLOR_BLACK);
 
     /* loop until done */
-
     int endpoint = col;
     if (REVERSE) {
         endpoint = 0;
@@ -596,55 +604,46 @@ int main(int argc, char *argv[]) {
 
         // check for wrap on loop
         if(FLIP){
-          if(REVERSE){
-            if(x_pos <= 0) REVERSE = false;
-          }
-          else {
-            if(x_pos + strlen(chad_frames[i % CHAD_FRAMES][1]) + 1 >= col) REVERSE = true;
-          }
-        }
-        else if (REVERSE) {
-          if (x_pos <= 0) x_pos = col;
-          }
-        else {
-          if (x_pos >= col) x_pos = 0;
+            if(REVERSE && x_pos <= 0){
+                REVERSE = false;
+            } else if(x_pos + strlen(chad_frames[i % CHAD_FRAMES][1]) + 1 >= col) {
+                REVERSE = true;
+            }
+        } else if (REVERSE && x_pos <= 0) {
+            x_pos = col;
+        } else if (x_pos >= col) {
+            x_pos = 0;
         }
 
         if(!FLIP){
-          for (int j = 0; j < CHAD_ROWS; j++) {
-              // find position of furthest character to the right
-              int right_pos = x_pos + strlen(chad_frames[i % CHAD_FRAMES][j]);
-              // draw row, checking it doesn't go off screen if not looping
-              mvaddnstr(j * SIZE + row/2 - (CHAD_ROWS*SIZE/2), x_pos,
-                  chad_frames[i % CHAD_FRAMES][j],
-                  (right_pos > col && !LOOP) ? col - x_pos : right_pos);
-          }
-        }
-        else {
-          // Start going right
-          if(!REVERSE){
             for (int j = 0; j < CHAD_ROWS; j++) {
                 // find position of furthest character to the right
                 int right_pos = x_pos + strlen(chad_frames[i % CHAD_FRAMES][j]);
                 // draw row, checking it doesn't go off screen if not looping
                 mvaddnstr(j * SIZE + row/2 - (CHAD_ROWS*SIZE/2), x_pos,
-                    chad_frames[i % CHAD_FRAMES][j],
-                    (right_pos > col && !LOOP && !FLIP) ? col - x_pos : right_pos);
+                          chad_frames[i % CHAD_FRAMES][j],
+                          (right_pos > col && !LOOP) ? col - x_pos : right_pos);
             }
-
-          }
-          // Go left
-          else{
+        } else if(!REVERSE) {
+            // Start going right
+            for (int j = 0; j < CHAD_ROWS; j++) {
+                // find position of furthest character to the right
+                int right_pos = x_pos + strlen(chad_frames[i % CHAD_FRAMES][j]);
+                // draw row, checking it doesn't go off screen if not looping
+                mvaddnstr(j * SIZE + row/2 - (CHAD_ROWS*SIZE/2), x_pos,
+                          chad_frames[i % CHAD_FRAMES][j],
+                          (right_pos > col && !LOOP && !FLIP) ? col - x_pos : right_pos);
+            }
+        } else {
+            // Start going left
             for(int j = 0; j < CHAD_ROWS; j++){
-              // find position of furthest character to the right
-              int right_pos = x_pos + strlen(chad_frames_flip[i % CHAD_FRAMES][j]);
-              // draw row, checking it doesn't go off screen if not looping
-              mvaddnstr(j * SIZE + row/2 - (CHAD_ROWS*SIZE/2), x_pos,
-                  chad_frames_flip[i % CHAD_FRAMES][j],
-                  (right_pos > col && !LOOP && !FLIP) ? col + x_pos : right_pos);
+                // find position of furthest character to the right
+                int right_pos = x_pos + strlen(chad_frames_flip[i % CHAD_FRAMES][j]);
+                // draw row, checking it doesn't go off screen if not looping
+                mvaddnstr(j * SIZE + row/2 - (CHAD_ROWS*SIZE/2), x_pos,
+                          chad_frames_flip[i % CHAD_FRAMES][j],
+                          (right_pos > col && !LOOP && !FLIP) ? col + x_pos : right_pos);
             }
-          }
-
         }
 
         i++; // increment animation counter
@@ -662,18 +661,18 @@ int main(int argc, char *argv[]) {
         refresh();
 
         /* display message */
-        if ( MES ) {
+        if (MES) {
             int mesg_x = x_pos + AVG_CHAD_WIDTH / 2 - (strlen(message) / 2);
             int mesg_y = ((3 * row / 4) + (CHAD_ROWS * SIZE / 4));
 
-	    if ( mesg_x + strlen(message) >= col && !LOOP ){
-		mvaddnstr(mesg_y, mesg_x, message, col - mesg_x);
-	    } else if ( mesg_x + strlen(message) >= col && LOOP ) {
-		mvaddnstr(mesg_y, mesg_x, message, col - mesg_x);
-		mvaddnstr(mesg_y, 0, message + col - mesg_x, strlen(message) - col + mesg_x);
-	    } else {
-		mvaddnstr(mesg_y, mesg_x, message, strlen(message));
-	    }
+            if (mesg_x + strlen(message) >= col && !LOOP){
+                mvaddnstr(mesg_y, mesg_x, message, col - mesg_x);
+            } else if (mesg_x + strlen(message) >= col && LOOP) {
+                mvaddnstr(mesg_y, mesg_x, message, col - mesg_x);
+                mvaddnstr(mesg_y, 0, message + col - mesg_x, strlen(message) - col + mesg_x);
+            } else {
+                mvaddnstr(mesg_y, mesg_x, message, strlen(message));
+            }
         }
 
         /* Color stuff */
@@ -683,13 +682,13 @@ int main(int argc, char *argv[]) {
             PAIR = get_color_pair(c, PAIR);
         }
 
-        if(RAINBOW && !NORAINBOW)
-        {
+        if(RAINBOW && !NORAINBOW){
             PAIR = rainbowIterator;
-            if(rainbowIterator < 7)
-              rainbowIterator++;
-            else
-              rainbowIterator = 1;
+            if(rainbowIterator < 7){
+                rainbowIterator++;
+            } else {
+                rainbowIterator = 1;
+            }
         }
 
         clear();
