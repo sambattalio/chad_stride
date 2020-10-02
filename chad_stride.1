@@ -1,0 +1,69 @@
+.\" Manpage for chad_stride
+.\"
+.TH chad_stride 1 "01 October 2020" "1.0"
+.SH NAME
+chad_stride \- configurable animated Chad walking on the terminal
+.SH SYNOPSIS
+.B ./chad_stride \fR[options]
+.SH DESCRIPTION
+.B chad_stride
+Generates an animated ASCII depiction of
+Chad. By default, Chad strides across
+the screen once and exits. A variety of
+flag options can alter the behavior of the
+created Chad entity.
+.SH OPTIONS
+The following flags can be applied when
+invoking chad_stride. As expected, flags
+with conflicting effects will not be
+executed.
+.B "-c COLOR"
+and
+.B "-R"
+cannot be used simultaneously, as well
+as
+.B "-l"
+and
+.B "-p."
+.TP
+.BR \-s
+Chad will stay still indefinitely
+.TP
+.BR \-l
+Chad walks indefinitely and wraps around screen
+.TP
+.BR \-r
+Chad walks backwards
+.TP
+.BR -b " " \fISIZE
+A bigger Chad is created according to the value of SIZE
+.TP
+.BR -f
+Generated Chad ignores signals
+.TP
+.BR -a " " \fISLEEP_TIME
+Adjust the sleep timer (sec) for Chad
+.TP
+.BR -c " " \fICOLOR
+Adjust the color of the created chad, COLOR takes on values (r|g|b|m|c|y)
+.TP
+.BR -m " " \fIMESSAGE
+Displays a banner message below Chad, MESSAGE is capped at 50 characters
+.TP
+.BR -R
+Creates a Chad with constantly alternating colors
+.TP
+.BR -p
+Instead of wrapping, Chad will flip when hitting the edge of the screen
+.TP
+.BR -h
+Display the usage message
+.SH AUTHOR
+Sam Battalio (sambattalio), with contributions from
+Gavin Inglis (ginglis13),
+Ben Lyons (benjaminlyons),
+Peter Bui (pbui),
+Noah Yoshida (noyoshi),
+Will Theisen (wtheisen),
+Mike Eisemann (AndroidKitKat),
+Nolan McShea (Nuolong)
