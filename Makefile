@@ -9,7 +9,8 @@ chad_stride: 	chad_stride.c
 install: 	chad_stride
 	mkdir -p $(PREFIX)/bin
 	install -m 755 chad_stride $(PREFIX)/bin/chad_stride
-	install -Dm644 chad_stride.1 $(PREFIX)/share/man/man1/chad_stride.1
+	mkdir -p $(PREFIX)/share/man/man1
+	install -m644 chad_stride.1 $(PREFIX)/share/man/man1/chad_stride.1
 	ln -s $(PREFIX)/bin/chad_stride $(PREFIX)/bin/cs
 
 uninstall:
