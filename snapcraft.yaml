@@ -1,0 +1,18 @@
+name: chad-stride 
+version: 0.695
+summary: A small curses program to stride across your terminal
+description: chad_stride is a program similar to sl (steam locomotive). It will display Chad in all his glory striding across your terminal. Use chad_stride -h for custimization.
+parts:
+    chad-stride:
+        plugin: make
+        source-type: tar    
+        source:  https://github.com/sambattalio/chad_stride/archive/0.6951.tar.gz       
+        build-packages:
+            - gcc
+            - make
+            - libncurses5-dev
+            - libncursesw5-dev
+apps:
+    chad-stride:
+        command: chad_stride
+
