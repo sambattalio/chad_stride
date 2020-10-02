@@ -63,6 +63,12 @@ make
 make install
 ```
 
+You can install to a custom `PREFIX` by doing the following:
+```
+make PREFIX=~/.local install
+```
+
+
 **Uninstall:**
 ```
 make uninstall
