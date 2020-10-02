@@ -74,7 +74,7 @@ make uninstall
 
 **Snap:**
 ```
-snap install chad-stride
+snap install --edge chad-stride
 ```
 
 ### Windows
