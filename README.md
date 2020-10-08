@@ -78,6 +78,11 @@ make uninstall
 
 `yay -S chad_stride`
 
+**Snap:**
+```
+snap install --edge chad-stride
+```
+
 ### Windows
 
 Someone please tell me
