@@ -1,0 +1,23 @@
+name: Build test
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [ master ]
+
+
+jobs:
+  build:
+    name: run build test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Test build
+        run: |
+          make
+          make install
+
